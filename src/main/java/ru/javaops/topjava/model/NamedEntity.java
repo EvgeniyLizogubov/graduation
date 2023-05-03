@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaops.topjava.util.validation.NoHtml;
 
-
 @MappedSuperclass
 @Getter
 @Setter
@@ -19,7 +18,7 @@ public abstract class NamedEntity extends BaseEntity {
 
     @NotBlank
     @Size(min = 2, max = 128)
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @NoHtml
     protected String name;
 
