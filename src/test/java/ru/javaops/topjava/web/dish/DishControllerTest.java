@@ -1,4 +1,4 @@
-package ru.javaops.topjava.web.restaurant;
+package ru.javaops.topjava.web.dish;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,8 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javaops.topjava.model.Restaurant;
-import ru.javaops.topjava.repository.RestaurantRepository;
+import ru.javaops.topjava.model.Dish;
+import ru.javaops.topjava.repository.DishRepository;
 import ru.javaops.topjava.web.AbstractControllerTest;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,91 +15,83 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava.util.JsonUtil.writeValue;
-import static ru.javaops.topjava.web.restaurant.RestaurantController.REST_URL;
-import static ru.javaops.topjava.web.restaurant.RestaurantTestData.*;
+import static ru.javaops.topjava.web.dish.DishController.REST_URL;
+import static ru.javaops.topjava.web.dish.DishTestData.*;
+import static ru.javaops.topjava.web.restaurant.RestaurantTestData.restaurant1;
 import static ru.javaops.topjava.web.user.UserTestData.ADMIN_MAIL;
 import static ru.javaops.topjava.web.user.UserTestData.NOT_FOUND;
 
-public class RestaurantControllerTest extends AbstractControllerTest {
+public class DishControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL_SLASH = REST_URL + "/";
+    private static final String TEST_URL = REST_URL.replace("{restaurantId}", restaurant1.getId().toString());
+    private static final String TEST_URL_SLASH = TEST_URL + "/";
 
     @Autowired
-    private RestaurantRepository restaurantRepository;
+    private DishRepository dishRepository;
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(restaurant1, restaurant2));
+        perform(MockMvcRequestBuilders.get(TEST_URL))
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + restaurant1.getId()))
+        perform(MockMvcRequestBuilders.get(TEST_URL_SLASH + "1"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(restaurant1));
+                .andExpect(DISH_MATCHER.contentJson(dish1));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + NOT_FOUND))
+        perform(MockMvcRequestBuilders.get(TEST_URL_SLASH + NOT_FOUND))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    void getWithDishes() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + restaurant1.getId() + "/with-dishes"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_WITH_DISHES_MATCHER.contentJson(restaurant1));
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + restaurant1.getId()))
+        perform(MockMvcRequestBuilders.delete(TEST_URL_SLASH + dish1.getId()))
                 .andExpect(status().isNoContent());
-        assertFalse(restaurantRepository.findById(restaurant1.getId()).isPresent());
+        assertFalse(dishRepository.findById(dish1.getId()).isPresent());
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void deleteNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + NOT_FOUND))
+        perform(MockMvcRequestBuilders.delete(TEST_URL_SLASH + NOT_FOUND))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void create() throws Exception {
-        Restaurant newRestaurant = getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+        Dish newDish = getNew();
+        ResultActions action = perform(MockMvcRequestBuilders.post(TEST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(writeValue(newRestaurant)))
+                .content(writeValue(newDish)))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        Restaurant created = RESTAURANT_MATCHER.readFromJson(action);
+        Dish created = DISH_MATCHER.readFromJson(action);
         int newId = created.getId();
-        newRestaurant.setId(newId);
-        RESTAURANT_MATCHER.assertMatch(created, newRestaurant);
-        RESTAURANT_MATCHER.assertMatch(restaurantRepository.getExisted(newId), newRestaurant);
+        newDish.setId(newId);
+        DISH_MATCHER.assertMatch(created, newDish);
+        DISH_MATCHER.assertMatch(dishRepository.getExisted(newId), newDish);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createInvalid() throws Exception {
-        Restaurant invalid = new Restaurant(null, null, null, null, null);
-        perform(MockMvcRequestBuilders.post(REST_URL)
+        Dish invalid = new Dish(null, null, -1);
+        perform(MockMvcRequestBuilders.post(TEST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(invalid)))
                 .andDo(print())
@@ -109,22 +101,22 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void update() throws Exception {
-        Restaurant updated = getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + restaurant1.getId())
+        Dish updated = getUpdated();
+        perform(MockMvcRequestBuilders.put(TEST_URL_SLASH + dish1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        RESTAURANT_MATCHER.assertMatch(restaurantRepository.getExisted(restaurant1.getId()), updated);
+        DISH_MATCHER.assertMatch(dishRepository.getExisted(dish1.getId()), updated);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void updateInvalid() throws Exception {
-        Restaurant invalid = new Restaurant(restaurant1);
+        Dish invalid = new Dish(dish1);
         invalid.setName("");
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + invalid.getId())
+        perform(MockMvcRequestBuilders.put(TEST_URL_SLASH + dish1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(invalid)))
                 .andDo(print())
@@ -134,9 +126,9 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void updateHtmlUnsafe() throws Exception {
-        Restaurant unsafe = new Restaurant(restaurant1);
+        Dish unsafe = new Dish(dish1);
         unsafe.setName("<script>alert(123)</script>");
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + unsafe.getId())
+        perform(MockMvcRequestBuilders.put(TEST_URL_SLASH + dish1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(unsafe)))
                 .andDo(print())

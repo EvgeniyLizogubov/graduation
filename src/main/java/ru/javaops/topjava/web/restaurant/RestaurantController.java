@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import ru.javaops.topjava.error.NotFoundException;
 import ru.javaops.topjava.model.Restaurant;
 import ru.javaops.topjava.repository.RestaurantRepository;
 
@@ -21,21 +22,27 @@ import static ru.javaops.topjava.util.validation.ValidationUtil.assureIdConsiste
 @AllArgsConstructor
 public class RestaurantController {
 
-    static final String REST_URL = "/api/profile/restaurants";
+    public static final String REST_URL = "/api/profile/restaurants";
 
     @Autowired
     protected RestaurantRepository repository;
 
     @GetMapping
     public List<Restaurant> getAll() {
-        log.info("getAll");
+        log.info("get all restaurants");
         return repository.findAll(Sort.by(Sort.Direction.DESC, "date"));
     }
 
     @GetMapping("/{id}")
     public Restaurant get(@PathVariable int id) {
-        log.info("get restaurant {}", id);
+        log.info("get restaurant id={}", id);
         return repository.getExisted(id);
+    }
+
+    @GetMapping("/{id}/with-dishes")
+    public Restaurant getWithDishes(@PathVariable int id) {
+        log.info("get restaurant id={} with dishes", id);
+        return repository.getWithDishes(id).orElseThrow(() -> new NotFoundException("Entity with id=" + id + " not found"));
     }
 
     @DeleteMapping("/{id}")
@@ -54,7 +61,7 @@ public class RestaurantController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
-        log.info("update {} with id={}", restaurant, id);
+        log.info("update {} id={}", restaurant, id);
         assureIdConsistent(restaurant, id);
         repository.save(restaurant);
     }

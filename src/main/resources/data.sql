@@ -9,11 +9,12 @@ VALUES ('USER', 1),
        ('USER', 2);
 
 INSERT INTO RESTAURANT (name, date)
-VALUES ('McDonalds', '2020-01-30'),
-       ('KFC', '2020-01-30');
+VALUES ('Kebab', '2020-01-30'),
+       ('McDonalds', '2020-01-30');
 
-INSERT INTO DISH (name, price)
-VALUES ('Chlenburber', 666);
+INSERT INTO DISH (name, price, restaurant_id)
+VALUES ('Doner', 666, 1),
+       ('Pita', 300, 1);
 
 INSERT INTO MEAL (date_time, description, calories, user_id)
 VALUES ('2020-01-30 10:00:00', 'Завтрак', 500, 1),

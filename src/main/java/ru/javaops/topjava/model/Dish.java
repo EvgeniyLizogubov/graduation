@@ -19,4 +19,13 @@ public class Dish extends NamedEntity {
     @NotNull
     @Min(1)
     private int price;
+
+    public Dish(Dish d) {
+        this(d.id, d.name, d.price);
+    }
+
+    public Dish(Integer id, String name, int price) {
+        super(id, name);
+        this.price = price;
+    }
 }
