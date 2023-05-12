@@ -6,19 +6,20 @@ import ru.javaops.topjava.util.JsonUtil;
 import ru.javaops.topjava.web.MatcherFactory;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.javaops.topjava.web.meal.MealTestData.*;
+import static ru.javaops.topjava.web.restaurant.RestaurantTestData.restaurant1;
+import static ru.javaops.topjava.web.restaurant.RestaurantTestData.restaurant2;
 
 public class UserTestData {
-    public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered", "meals", "password");
-    public static MatcherFactory.Matcher<User> USER_WITH_MEALS_MATCHER =
+    public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered", "restaurants", "password");
+    public static MatcherFactory.Matcher<User> USER_WITH_RESRAURANTS_MATCHER =
             MatcherFactory.usingAssertions(User.class,
                     //     No need use ignoringAllOverriddenEquals, see https://assertj.github.io/doc/#breaking-changes
                     (a, e) -> assertThat(a).usingRecursiveComparison()
-                            .ignoringFields("registered", "meals.user", "password").isEqualTo(e),
+                            .ignoringFields("restaurants.2024-01-30.users", "restaurants.2024-01-31.dishes", "password").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
@@ -31,24 +32,24 @@ public class UserTestData {
     public static final String ADMIN_MAIL = "admin@gmail.com";
     public static final String GUEST_MAIL = "guest@gmail.com";
 
-//    public static final User user = new User(USER_ID, "User", USER_MAIL, "password", 2005, Role.USER);
-//    public static final User admin = new User(ADMIN_ID, "Admin", ADMIN_MAIL, "admin", 1900, Role.ADMIN, Role.USER);
-//    public static final User guest = new User(GUEST_ID, "Guest", GUEST_MAIL, "guest", 2000);
+    public static final User user = new User(USER_ID, "User", USER_MAIL, "password", null, Role.USER);
+    public static final User admin = new User(ADMIN_ID, "Admin", ADMIN_MAIL, "admin", null, Role.ADMIN, Role.USER);
+    public static final User guest = new User(GUEST_ID, "Guest", GUEST_MAIL, "guest", null);
 
-//    static {
-//        user.setMeals(meals);
-//        admin.setMeals(List.of(adminMeal2, adminMeal1));
-//    }
+    static {
+        user.setRestaurants(Map.of(restaurant1.getVoteDate(), restaurant1, restaurant2.getVoteDate(), restaurant2));
+        admin.setRestaurants(Map.of(restaurant2.getVoteDate(), restaurant2));
+    }
 
-//    public static User getNew() {
-//        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-//    }
+    public static User getNew() {
+        return new User(null, "New", "new@gmail.com", "newPass", true,null, Collections.singleton(Role.USER));
+    }
 
-//    public static User getUpdated() {
-//        return new User(USER_ID, "UpdatedName", USER_MAIL, "newPass", 330, false, new Date(), List.of(Role.ADMIN));
-//    }
+    public static User getUpdated() {
+        return new User(USER_ID, "UpdatedName", USER_MAIL, "newPass", true,null, List.of(Role.ADMIN));
+    }
 
-//    public static String jsonWithPassword(User user, String passw) {
-//        return JsonUtil.writeAdditionProps(user, "password", passw);
-//    }
+    public static String jsonWithPassword(User user, String passw) {
+        return JsonUtil.writeAdditionProps(user, "password", passw);
+    }
 }

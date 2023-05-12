@@ -1,5 +1,6 @@
 package ru.javaops.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -8,23 +9,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.util.CollectionUtils;
 import ru.javaops.topjava.HasId;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "restaurant", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "date"})})
+@Table(name = "restaurant", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "vote_date"}, name = "restaurant_unique_name_votedate_idx")})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Restaurant extends NamedEntity implements HasId {
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "vote_date", nullable = false)
     @NotNull
-    private LocalDate date;
+    private LocalDate voteDate;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
@@ -32,25 +31,18 @@ public class Restaurant extends NamedEntity implements HasId {
     @OrderBy("name ASC")
     private List<Dish> dishes;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "restaurants")
+    @JsonIgnoreProperties({"restaurants"})
     private List<User> users;
 
     public Restaurant(Restaurant r) {
-        this(r.id, r.name, r.date, r.dishes, r.users);
+        this(r.id, r.name, r.voteDate, r.dishes, r.users);
     }
 
-    public Restaurant(Integer id, String name, LocalDate date, Collection<Dish> dishes, Collection<User> users) {
+    public Restaurant(Integer id, String name, LocalDate voteDate, List<Dish> dishes, List<User> users) {
         super(id, name);
-        this.date = date;
-        setDishes(dishes);
-        setUsers(users);
-    }
-
-    public void setDishes(Collection<Dish> dishes) {
-        this.dishes = CollectionUtils.isEmpty(dishes) ? null : List.copyOf(dishes);
-    }
-
-    public void setUsers(Collection<User> users) {
-        this.users = CollectionUtils.isEmpty(users) ? null : List.copyOf(users);
+        this.voteDate = voteDate;
+        this.dishes = dishes;
+        this.users = users;
     }
 }

@@ -1,5 +1,6 @@
 package ru.javaops.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -17,10 +18,8 @@ import ru.javaops.topjava.util.validation.NoHtml;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -45,10 +44,17 @@ public class User extends NamedEntity implements HasIdAndEmail, Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OrderBy("date DESC")
-    @JoinColumn(name = "restaurant_id"/*, columnDefinition = "default null"*/)
-    private Restaurant restaurant;
+    @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
+    private boolean enabled = true;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @MapKey(name = "voteDate")
+    @JoinTable(name = "user_restaurant",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "restaurant_id")})
+    @OrderBy("voteDate DESC")
+    @JsonIgnoreProperties({"users", "dishes"})
+    private Map<LocalDate, Restaurant> restaurants;
 
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_role",
@@ -61,24 +67,25 @@ public class User extends NamedEntity implements HasIdAndEmail, Serializable {
     private Set<Role> roles;
 
     public User(User u) {
-        this(u.id, u.name, u.email, u.password, u.restaurant, u.roles);
+        this(u.id, u.name, u.email, u.password, u.enabled, u.restaurants, u.roles);
     }
 
-    public User(Integer id, String name, String email, String password, Role... roles) {
-        this(id, name, email, password, null, Arrays.asList(roles));
+    public User(Integer id, String name, String email, String password, Map<LocalDate, Restaurant> restaurants,Role... roles) {
+        this(id, name, email, password, true, restaurants, Arrays.asList(roles));
     }
 
-    public User(Integer id, String name, String email, String password, Restaurant restaurant, Collection<Role> roles) {
+    public User(Integer id, String name, String email, String password, Boolean enabled, Map<LocalDate, Restaurant> restaurants, Collection<Role> roles) {
         super(id, name);
         this.email = email;
         this.password = password;
         setRoles(roles);
-        this.restaurant = restaurant;
+        this.restaurants = restaurants;
     }
 
     public void setRoles(Collection<Role> roles) {
         this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
     }
+
     public boolean hasRole(Role role) {
         return roles != null && roles.contains(role);
     }

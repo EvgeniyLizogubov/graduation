@@ -28,10 +28,10 @@ public class AdminUserController extends AbstractUserController {
         return super.get(id);
     }
 
-//    @GetMapping("/{id}/with-meals")
-//    public ResponseEntity<User> getWithMeals(@PathVariable int id) {
-//        return super.getWithMeals(id);
-//    }
+    @GetMapping("/{id}/with-restaurants")
+    public User getWithRestaurants(@PathVariable int id) {
+        return super.getWithRestaurants(id);
+    }
 
     @Override
     @DeleteMapping("/{id}")
@@ -77,6 +77,6 @@ public class AdminUserController extends AbstractUserController {
     public void enable(@PathVariable int id, @RequestParam boolean enabled) {
         log.info(enabled ? "enable {}" : "disable {}", id);
         User user = repository.getExisted(id);
-//-        user.setEnabled(enabled);
+        user.setEnabled(enabled);
     }
 }

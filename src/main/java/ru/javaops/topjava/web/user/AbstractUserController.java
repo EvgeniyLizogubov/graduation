@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import ru.javaops.topjava.error.NotFoundException;
 import ru.javaops.topjava.model.User;
 import ru.javaops.topjava.repository.UserRepository;
 
@@ -33,8 +34,8 @@ public abstract class AbstractUserController {
         repository.deleteExisted(id);
     }
 
-//    public ResponseEntity<User> getWithMeals(int id) {
-//        log.info("getWithMeals {}", id);
-//        return ResponseEntity.of(repository.getWithMeals(id));
-//    }
+    public User getWithRestaurants(int id) {
+        log.info("getWithRestaurants {}", id);
+        return repository.getWithRestaurants(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " not found"));
+    }
 }
