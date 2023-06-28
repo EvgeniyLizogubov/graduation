@@ -1,30 +1,18 @@
-Java Enterprise Online Project
-===============================
+Technical requirement:
 
-Наиболее востребованные технологии /инструменты / фреймворки Java Enterprise:
-Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson)/ Bootstrap(CSS)/ jQuery + plugins.
+Design and implement a REST API using Hibernate/Spring/SpringMVC (Spring-Boot preferred!) without frontend.
 
-- [Вступительное занятие](https://github.com/JavaOPs/topjava)
-- [Описание и план проекта](https://github.com/JavaOPs/topjava/blob/master/description.md)
-- [Wiki](https://github.com/JavaOPs/topjava/wiki)
-- [Wiki Git](https://github.com/JavaOPs/topjava/wiki/Git)
-- [Wiki IDEA](https://github.com/JavaOPs/topjava/wiki/IDEA)
-- [Демо разрабатываемого приложения](http://topjava.herokuapp.com/)
+The task is:
 
-### Миграция TopJava на Spring-Boot
-Финальный код проекта BootJava с миграцией на Spring Boot 3.0
+Build a voting system for deciding where to have lunch.
 
--------------------------------------------------------------
+* 2 types of users: admin and regular users
+* Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
+* Menu changes each day (admins do the updates)
+* Users can vote for a restaurant they want to have lunch at today
+* Only one vote counted per user
+* If user votes again the same day:
+  * If it is before 11:00 we assume that he changed his mind.
+  * If it is after 11:00 then it is too late, vote can't be changed
 
-- Stack: [JDK 17](http://jdk.java.net/17/), Spring Boot 3.0, Lombok, H2, Caffeine Cache, Swagger/OpenAPI 3.0
-- Run: `mvn spring-boot:run` in root directory.
-
------------------------------------------------------
-[REST API documentation](http://localhost:8080/)  
-Креденшелы:
-
-```
-Admin: admin@gmail.com / admin
-User:  user@yandex.ru / password
-Guest: guest@gmail.com / guest
-```
+Each restaurant provides a new menu each day.

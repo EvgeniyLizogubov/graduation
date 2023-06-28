@@ -8,11 +8,11 @@
         <version>3.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>ru.javaops</groupId>
-    <artifactId>topjava-boot</artifactId>
+    <groupId>com.github.EvgeniyLizogubov</groupId>
+    <artifactId>voteRestaurantRESTApi</artifactId>
     <version>1.0</version>
-    <name>TopJava Boot</name>
-    <description>Calories Management application (TopJava) Spring Boot migration</description>
+    <name>Vote restaurant REST Api</name>
+    <description>Vote restaurant REST Api application</description>
 
     <properties>
         <java.version>17</java.version>
