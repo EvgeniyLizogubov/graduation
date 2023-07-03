@@ -1,5 +1,6 @@
 package com.github.EvgeniyLizogubov.voteRestaurantRESTApi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -22,13 +23,14 @@ public class Dish extends NamedEntity {
     @Min(1)
     private Integer price;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "vote_date", nullable = false)
     @NotNull
-    private LocalDate date;
+    private LocalDate voteDate;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Restaurant restaurant;
 
     public Dish(Dish d) {

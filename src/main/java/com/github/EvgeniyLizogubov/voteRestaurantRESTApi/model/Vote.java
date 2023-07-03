@@ -7,16 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "vote")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Vote extends BaseEntity {
-    @Column(name = "vote_date_time", nullable = false)
-    private LocalDateTime voteDateTime;
+    @Column(name = "vote_date", nullable = false)
+    private LocalDate voteDate;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -25,5 +25,6 @@ public class Vote extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
+    @NotNull
     private Restaurant chosenRestaurant;
 }

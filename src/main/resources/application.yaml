@@ -16,7 +16,8 @@ spring:
         jdbc.batch_size: 20
   datasource:
     # ImMemory
-    url: jdbc:h2:mem:topjava
+#    url: jdbc:h2:mem:topjava
+    url: jdbc:postgresql://localhost:5432/graduation
     #    tcp: jdbc:h2:tcp://localhost:9092/mem:topjava
     # Absolute path
     #    url: jdbc:h2:C:/projects/bootjava/db/topjava
@@ -26,10 +27,13 @@ spring:
     # Relative path from home
     #    url: jdbc:h2:~/topjava
     #    tcp: jdbc:h2:tcp://localhost:9092/~/topjava
-    username: sa
-    password:
+#    username: sa
+#    password:
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
 
-# Jackson Serialization Issue Resolver
+  # Jackson Serialization Issue Resolver
   jackson.visibility:
     field: any
     getter: none

@@ -28,11 +28,6 @@ public class AdminUserController extends AbstractUserController {
         return super.get(id);
     }
 
-    @GetMapping("/{id}/with-restaurants")
-    public User getWithRestaurants(@PathVariable int id) {
-        return super.getWithRestaurants(id);
-    }
-
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -69,14 +64,5 @@ public class AdminUserController extends AbstractUserController {
     public User getByEmail(@RequestParam String email) {
         log.info("getByEmail {}", email);
         return repository.getExistedByEmail(email);
-    }
-
-    @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
-    public void enable(@PathVariable int id, @RequestParam boolean enabled) {
-        log.info(enabled ? "enable {}" : "disable {}", id);
-        User user = repository.getExisted(id);
-        user.setEnabled(enabled);
     }
 }
