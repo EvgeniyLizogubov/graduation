@@ -1,18 +1,16 @@
-Technical requirement:
+### Реализация REST API приложения голосования за место обеда
 
-Design and implement a REST API using Hibernate/Spring/SpringMVC (Spring-Boot preferred!) without frontend.
+#### Функционал:
+* 2 типа пользователей: администратор и обычные пользователи.
+* Администратор может указать ресторан и меню обеда дня (обычно 2-5 позиций, только название блюда и цена).
+* Меню меняется каждый день (обновления делают администраторы)
+* Пользователи могут голосовать за ресторан, в котором они хотят пообедать сегодня.
+* От каждого пользователя засчитывается только один голос.
+* Если пользователь проголосует еще раз в тот же день:
+  * Если это произошло до 11:00, мы предполагаем, что он передумал.
+  * Если уже после 11:00, то уже поздно, голос изменить нельзя.
 
-The task is:
+Каждый ресторан каждый день предлагает новое меню.
 
-Build a voting system for deciding where to have lunch.
-
-* 2 types of users: admin and regular users
-* Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
-* Menu changes each day (admins do the updates)
-* Users can vote for a restaurant they want to have lunch at today
-* Only one vote counted per user
-* If user votes again the same day:
-  * If it is before 11:00 we assume that he changed his mind.
-  * If it is after 11:00 then it is too late, vote can't be changed
-
-Each restaurant provides a new menu each day.
+##### Стэк:
+Spring Boot, Spring Security, Spring Data JPA, Spring MVC, Jackson, Lombok, Liquibase, PostgreSQL

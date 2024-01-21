@@ -51,7 +51,7 @@ public class VoteController {
         return voteRepository.getExisted(id);
     }
 
-    @PostMapping(value = PROFILE_REST_URL + "/vote", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = PROFILE_REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public Vote create(@AuthenticationPrincipal AuthUser authUser, @RequestParam int restaurantId) {
         log.info("create new vote by authUser: {} for restaurant with id = {}", authUser, restaurantId);

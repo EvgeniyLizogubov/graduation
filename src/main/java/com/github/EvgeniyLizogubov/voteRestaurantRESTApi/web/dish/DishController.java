@@ -30,7 +30,7 @@ public class DishController {
     protected DishRepository dishRepository;
     protected final RestaurantRepository restaurantRepository;
 
-    @GetMapping(PROFILE_REST_URL + "/all-by-vote-date/{voteDate}")
+    @GetMapping(PROFILE_REST_URL + "/vote-date/{voteDate}")
     public List<Dish> getAllByRestaurantAndVoteDate(@PathVariable int restaurantId,
                                            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate voteDate) {
         log.info("get all dishes for restaurant id={} by voteDate={}", restaurantId, voteDate);

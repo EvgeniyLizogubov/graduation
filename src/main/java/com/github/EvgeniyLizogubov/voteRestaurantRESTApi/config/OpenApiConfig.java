@@ -2,7 +2,6 @@ package com.github.EvgeniyLizogubov.voteRestaurantRESTApi.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -22,13 +21,12 @@ import org.springframework.context.annotation.Configuration;
                 title = "REST API documentation",
                 version = "1.0",
                 description = """
-                        Calories Management application (<a href='https://javaops.ru/view/topjava'>TopJava</a>) Spring Boot migration
+                        Vote restaurant REST Api application
                         <p><b>Тестовые креденшелы:</b><br>
                         - user@yandex.ru / password<br>
                         - admin@gmail.com / admin<br>
                         - guest@gmail.com / guest</p>
-                        """,
-                contact = @Contact(url = "https://javaops.ru/#contacts", name = "Grigory Kislin", email = "admin@javaops.ru")
+                        """
         ),
         security = @SecurityRequirement(name = "basicAuth")
 )
